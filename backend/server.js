@@ -63,6 +63,44 @@ app.post('/login', async (req, res) => {
     }
 });
 
+app.post('/activities',async (req,res)=>{
+
+    const {title,description,start_date,end_date}=req.body;
+    if(!title || !description || !start_date || !end_date)
+    {
+        return res.status(400).json('All fields are required');
+    }
+    
+    try{
+    
+        if(!req.auth || req.auth.role!=='teacher')
+        {
+            return res.status(403).json({error:'Only teachers can create activities.'})
+        }
+
+        const lastActivity = await activity.findOne({ order: [['code', 'DESC']] });
+        const nextCode = lastActivity ? lastActivity.code + 1 : 1;
+        
+        const newActivity=await activity.create({
+            title,
+            description,
+            code:nextCode,
+            start_date,
+            end_date,
+            teacherId:req.auth.userId
+        });
+     
+        return res.status(201).json({message:'Activity created successfully ',activity:newActivity});
+    }
+    catch(e)
+    {
+        console.error('Error creating activity:',e);
+        return res.status(500).json({ error: e.message });
+    }
+    
+
+});
+
 app.get('/:email/user', async (req,res)=>{
         const userEmail=req.params.email;
         const user=await getUserByEmail(userEmail);
