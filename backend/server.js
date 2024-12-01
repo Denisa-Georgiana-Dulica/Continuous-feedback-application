@@ -8,6 +8,7 @@ import { activity } from './data_base/activities.model.js';
 import { expressjwt } from "express-jwt";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { reaction } from './data_base/reactions.model.js';
 
 const jwtSecret = process.env.JWT_SECRET;
 
@@ -109,7 +110,6 @@ app.get('/:email/user', async (req,res)=>{
 });
 
 app.get('/teacher-activities', async (req,res)=>{
-//add reactions from students (Just a teacher can see a list with his activities and students reactions)
     try{
     
         if (!req.auth || req.auth.role !== 'teacher') {
@@ -158,9 +158,10 @@ app.get('/show_teachers',async (req,res)=>{
     }
 });
 
-app.get('/teacher-activities-for-students',async (req,res)=>{
+app.get('/teacher-activities-for-students/:teacherId',async (req,res)=>{
     
-    const teacherId=req.query.teacherId;
+    //http://localhost:3001/activities/12345
+    const {teacherId}=req.params;
 
     if(!teacherId)
     {
@@ -180,7 +181,7 @@ app.get('/teacher-activities-for-students',async (req,res)=>{
         {
             return res.status(404).json({error:"Doesn't exist a teacher with this ID."});
         }
-        
+
         const activities=await activity.findAll({
                 where:{teacherId:teacherId}
         });
@@ -240,6 +241,72 @@ app.post('/validate-code',async (req,res)=>{
     catch(e)
     {
         console.log("Error validating activity code:",e);
+        return res.status(500).json({error:"Internal server error."});
+    }
+});
+
+app.post('/student_feedback',async (req,res)=>{
+    if(!req.auth || req.auth.role!=='student')
+        {
+            return res.status(403).json({error:'Only students can provide feedback.'});
+        }
+    
+    const {activity_id,emoji}=req.body;
+    if(!activity_id || !emoji)
+    {
+        return res.status(400).json({error:'Activity ID or emoji is missing'});
+    }
+    try{
+        const exist=await activity.findOne({
+            where:{activitiesId:activity_id}
+        });
+        
+        if(!exist)
+        {
+            return res.status(404).json({error:'Activity not found.'});
+        }
+
+        const reaction=await reaction.create({
+            activityId:activity_id,
+            studentId:req.auth.userId,
+            emoji:emoji,
+            timestamp:new Date()
+        });
+
+        res.status(200).json({message:'Feedback created'});
+    }
+    catch(e)
+    {
+        console.log("Error from creating reaction:",e);
+        return res.status(500).json({error:"Internal server error."});
+    }
+});
+
+app.get('/multiple-reactions/:activityId', async (req,res)=>{
+    
+    if (!req.auth || req.auth.role !== 'teacher') {
+        return res.status(403).json({ error: 'Only teachers can access activities' });
+    }
+
+    const {activityId}=req.params;
+
+    try{
+        const multiple_reactions=await reaction.findAll({
+            where:{activityId:activityId},
+            attributes:['emoji','timestamp','studentId'],
+            order:[['timestamp','ASC']]
+        })
+
+        if(multiple_reactions===0)
+        {
+            return res.status(200).json({ error: "You don't have feedback for this activity." });
+        }
+
+        return res.status(200).json(multiple_reactions);
+    }
+    catch(e)
+    {
+        console.log("Error from fetching feedback:",e);
         return res.status(500).json({error:"Internal server error."});
     }
 });

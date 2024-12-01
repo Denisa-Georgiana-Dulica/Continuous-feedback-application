@@ -17,7 +17,7 @@ export const reaction=sequelize.define('Reactions',{
             key:'activitiesId'
         }
     },
-    stundentId:{
+    studentId:{
         type:DataTypes.UUID,
         allowNull:false,
         references:{
