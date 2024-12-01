@@ -109,16 +109,16 @@ app.get('/:email/user', async (req,res)=>{
 });
 
 app.get('/teacher-activities', async (req,res)=>{
-
+//add reactions from students (Just a teacher can see a list with his activities and students reactions)
     try{
     
-        if (req.auth.role !== 'teacher') {
+        if (!req.auth || req.auth.role !== 'teacher') {
             return res.status(403).json({ error: 'Only teachers can access activities' });
         }
 
         const activities = await activity.findAll({
             where: { teacherId: req.auth.userId },
-            order: [['start_date', 'ASC']],
+            order: [['start_date', 'ASC']]
         });
 
         if (activities.length === 0) {
@@ -137,6 +137,112 @@ app.get('/teacher-activities', async (req,res)=>{
     }
 });
 
+app.get('/show_teachers',async (req,res)=>{
+    try{
+        const teachers=await user.findAll({
+            where:{role:'teacher'},
+            attributes:['userId','name']
+        });
+
+        if(teachers.length===0)
+        {
+            return res.status(404).json({error:'No teacher found.'});
+        }
+
+        return res.status(200).json({teachers:teachers});
+    }
+    catch(e)
+    {
+        console.log("Error while fetching teachers:",e);
+        return res.status(500).json({error:"Internal server error."});
+    }
+});
+
+app.get('/teacher-activities-for-students',async (req,res)=>{
+    
+    const teacherId=req.query.teacherId;
+
+    if(!teacherId)
+    {
+        return res.status(400).json({error:'You should add teacher ID.'});
+    }
+
+    try{
+        const exist=await user.findOne({
+            where:{
+                userId:teacherId,
+                role:'teacher'
+            }
+            
+        });
+
+        if(!exist)
+        {
+            return res.status(404).json({error:"Doesn't exist a teacher with this ID."});
+        }
+        
+        const activities=await activity.findAll({
+                where:{teacherId:teacherId}
+        });
+
+        if(!activities)
+        {
+            return res.status(404).json({error:"This teacher doesn't have activities."});
+        }
+
+        return res.status(200).json({activities:activities});
+    }
+    catch(e)
+    {
+        console.log("Error finding activities for this teacher:",e);
+        return res.status(500).json({error:"Internal server error."});
+    }
+});
+
+
+app.post('/validate-code',async (req,res)=>{
+              
+        if(!req.auth || req.auth.role!=='student')
+            {
+                return res.status(403).json({error:'Only students can use this code.'});
+            }
+        
+        const{activity_id, code_activity}=req.body;
+
+        if(!activity_id || !code_activity)
+        {
+            return res.status(400).json({error:"You should choose an activity and add activity code"});
+        }
+
+    try{
+        const chosen_activity=await activity.findOne({
+                where:
+                {
+                    activitiesId:activity_id
+                },
+                attributes:['activitiesId','code','title']
+        });
+
+        if(!chosen_activity)
+        {
+            return res.status(404).json({error:"Not found"});
+        }
+
+       if(Number(chosen_activity.code) === Number(code_activity))
+       {
+            return res.status(200).json({message:"Activity code is valid: ",chosen_activity});
+       }
+       else{
+        return res.status(400).json({error:"Invalid activity code."});
+       }
+
+    }
+    catch(e)
+    {
+        console.log("Error validating activity code:",e);
+        return res.status(500).json({error:"Internal server error."});
+    }
+});
 
 app.listen(3001,()=>{
     console.log('has started');
