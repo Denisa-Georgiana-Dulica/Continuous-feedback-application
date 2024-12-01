@@ -108,6 +108,34 @@ app.get('/:email/user', async (req,res)=>{
         }
 });
 
+app.get('/teacher-activities', async (req,res)=>{
+
+    try{
+    
+        if (req.auth.role !== 'teacher') {
+            return res.status(403).json({ error: 'Only teachers can access activities' });
+        }
+
+        const activities = await activity.findAll({
+            where: { teacherId: req.auth.userId },
+            order: [['start_date', 'ASC']],
+        });
+
+        if (activities.length === 0) {
+            return res.status(200).json({
+                message: 'No activities found for this teacher'
+            });
+        }
+
+        return res.status(200).json({
+            message: 'Activities retrieved successfully',
+            activities,
+        });
+    } catch (error) {
+        console.error('Error fetching teacher activities:', error);
+        return res.status(500).json({ error: 'Server error' });
+    }
+});
 
 
 app.listen(3001,()=>{
