@@ -109,34 +109,6 @@ app.get('/:email/user', async (req,res)=>{
         }
 });
 
-app.get('/teacher-activities', async (req,res)=>{
-    try{
-    
-        if (!req.auth || req.auth.role !== 'teacher') {
-            return res.status(403).json({ error: 'Only teachers can access activities' });
-        }
-
-        const activities = await activity.findAll({
-            where: { teacherId: req.auth.userId },
-            order: [['start_date', 'ASC']]
-        });
-
-        if (activities.length === 0) {
-            return res.status(200).json({
-                message: 'No activities found for this teacher'
-            });
-        }
-
-        return res.status(200).json({
-            message: 'Activities retrieved successfully',
-            activities,
-        });
-    } catch (error) {
-        console.error('Error fetching teacher activities:', error);
-        return res.status(500).json({ error: 'Server error' });
-    }
-});
-
 app.get('/show_teachers',async (req,res)=>{
     try{
         const teachers=await user.findAll({
@@ -221,7 +193,7 @@ app.post('/validate-code',async (req,res)=>{
                 {
                     activitiesId:activity_id
                 },
-                attributes:['activitiesId','code','title']
+                attributes:['activitiesId','code','title','description','start_date','end_date']
         });
 
         if(!chosen_activity)
@@ -258,7 +230,8 @@ app.post('/student_feedback',async (req,res)=>{
     }
     try{
         const exist=await activity.findOne({
-            where:{activitiesId:activity_id}
+            where:{activitiesId:activity_id},
+            attributes:['end_date']
         });
         
         if(!exist)
@@ -266,14 +239,21 @@ app.post('/student_feedback',async (req,res)=>{
             return res.status(404).json({error:'Activity not found.'});
         }
 
-        const reaction=await reaction.create({
+        const current_date=new Date();
+        const activity_end_date=new Date(exist.end_date);
+        if(activity_end_date<current_date)
+        {
+            return res.status(400).json({error:'This activity is no long available.'})
+        }
+
+        const newReaction=await reaction.create({
             activityId:activity_id,
             studentId:req.auth.userId,
             emoji:emoji,
-            timestamp:new Date()
+            timestamp:current_date
         });
 
-        res.status(200).json({message:'Feedback created'});
+        res.status(200).json({message:'Feedback created:',reaction:newReaction});
     }
     catch(e)
     {
@@ -282,34 +262,40 @@ app.post('/student_feedback',async (req,res)=>{
     }
 });
 
-app.get('/multiple-reactions/:activityId', async (req,res)=>{
-    
-    if (!req.auth || req.auth.role !== 'teacher') {
-        return res.status(403).json({ error: 'Only teachers can access activities' });
-    }
-
-    const {activityId}=req.params;
-
+app.get('/teacher-activities', async (req,res)=>{
     try{
-        const multiple_reactions=await reaction.findAll({
-            where:{activityId:activityId},
-            attributes:['emoji','timestamp','studentId'],
-            order:[['timestamp','ASC']]
-        })
-
-        if(multiple_reactions===0)
-        {
-            return res.status(200).json({ error: "You don't have feedback for this activity." });
+    
+        if (!req.auth || req.auth.role !== 'teacher') {
+            return res.status(403).json({ error: 'Only teachers can access activities' });
         }
 
-        return res.status(200).json(multiple_reactions);
-    }
-    catch(e)
-    {
-        console.log("Error from fetching feedback:",e);
-        return res.status(500).json({error:"Internal server error."});
+        const activities = await activity.findAll({
+            where: { teacherId: req.auth.userId },
+            attributes:['activitiesId','title','code','start_date','end_date'],
+            order: [['start_date', 'ASC']],
+            include:[{
+                model:reaction,
+                attributes:['emoji','timestamp','studentId'],
+                order: [['timestamp', 'ASC']]
+            }]
+        });
+
+        if (activities.length === 0) {
+            return res.status(200).json({
+                message: 'No activities found for this teacher'
+            });
+        }
+
+        return res.status(200).json({
+            message: 'Activities retrieved successfully',
+            activities:activities,
+        });
+    } catch (error) {
+        console.error('Error fetching teacher activities:', error);
+        return res.status(500).json({ error: 'Server error' });
     }
 });
+
 
 app.listen(3001,()=>{
     console.log('has started');
