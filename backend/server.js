@@ -8,6 +8,7 @@ import { activity } from './data_base/activities.model.js';
 import { expressjwt } from "express-jwt";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { reaction } from './data_base/reactions.model.js';
 
 const jwtSecret = process.env.JWT_SECRET;
 
@@ -108,35 +109,6 @@ app.get('/:email/user', async (req,res)=>{
         }
 });
 
-app.get('/teacher-activities', async (req,res)=>{
-//add reactions from students (Just a teacher can see a list with his activities and students reactions)
-    try{
-    
-        if (!req.auth || req.auth.role !== 'teacher') {
-            return res.status(403).json({ error: 'Only teachers can access activities' });
-        }
-
-        const activities = await activity.findAll({
-            where: { teacherId: req.auth.userId },
-            order: [['start_date', 'ASC']]
-        });
-
-        if (activities.length === 0) {
-            return res.status(200).json({
-                message: 'No activities found for this teacher'
-            });
-        }
-
-        return res.status(200).json({
-            message: 'Activities retrieved successfully',
-            activities,
-        });
-    } catch (error) {
-        console.error('Error fetching teacher activities:', error);
-        return res.status(500).json({ error: 'Server error' });
-    }
-});
-
 app.get('/show_teachers',async (req,res)=>{
     try{
         const teachers=await user.findAll({
@@ -158,9 +130,10 @@ app.get('/show_teachers',async (req,res)=>{
     }
 });
 
-app.get('/teacher-activities-for-students',async (req,res)=>{
+app.get('/teacher-activities-for-students/:teacherId',async (req,res)=>{
     
-    const teacherId=req.query.teacherId;
+    //http://localhost:3001/activities/12345
+    const {teacherId}=req.params;
 
     if(!teacherId)
     {
@@ -180,7 +153,7 @@ app.get('/teacher-activities-for-students',async (req,res)=>{
         {
             return res.status(404).json({error:"Doesn't exist a teacher with this ID."});
         }
-        
+
         const activities=await activity.findAll({
                 where:{teacherId:teacherId}
         });
@@ -220,7 +193,7 @@ app.post('/validate-code',async (req,res)=>{
                 {
                     activitiesId:activity_id
                 },
-                attributes:['activitiesId','code','title']
+                attributes:['activitiesId','code','title','description','start_date','end_date']
         });
 
         if(!chosen_activity)
@@ -243,6 +216,86 @@ app.post('/validate-code',async (req,res)=>{
         return res.status(500).json({error:"Internal server error."});
     }
 });
+
+app.post('/student_feedback',async (req,res)=>{
+    if(!req.auth || req.auth.role!=='student')
+        {
+            return res.status(403).json({error:'Only students can provide feedback.'});
+        }
+    
+    const {activity_id,emoji}=req.body;
+    if(!activity_id || !emoji)
+    {
+        return res.status(400).json({error:'Activity ID or emoji is missing'});
+    }
+    try{
+        const exist=await activity.findOne({
+            where:{activitiesId:activity_id},
+            attributes:['end_date']
+        });
+        
+        if(!exist)
+        {
+            return res.status(404).json({error:'Activity not found.'});
+        }
+
+        const current_date=new Date();
+        const activity_end_date=new Date(exist.end_date);
+        if(activity_end_date<current_date)
+        {
+            return res.status(400).json({error:'This activity is no long available.'})
+        }
+
+        const newReaction=await reaction.create({
+            activityId:activity_id,
+            studentId:req.auth.userId,
+            emoji:emoji,
+            timestamp:current_date
+        });
+
+        res.status(200).json({message:'Feedback created:',reaction:newReaction});
+    }
+    catch(e)
+    {
+        console.log("Error from creating reaction:",e);
+        return res.status(500).json({error:"Internal server error."});
+    }
+});
+
+app.get('/teacher-activities', async (req,res)=>{
+    try{
+    
+        if (!req.auth || req.auth.role !== 'teacher') {
+            return res.status(403).json({ error: 'Only teachers can access activities' });
+        }
+
+        const activities = await activity.findAll({
+            where: { teacherId: req.auth.userId },
+            attributes:['activitiesId','title','code','start_date','end_date'],
+            order: [['start_date', 'ASC']],
+            include:[{
+                model:reaction,
+                attributes:['emoji','timestamp','studentId'],
+                order: [['timestamp', 'ASC']]
+            }]
+        });
+
+        if (activities.length === 0) {
+            return res.status(200).json({
+                message: 'No activities found for this teacher'
+            });
+        }
+
+        return res.status(200).json({
+            message: 'Activities retrieved successfully',
+            activities:activities,
+        });
+    } catch (error) {
+        console.error('Error fetching teacher activities:', error);
+        return res.status(500).json({ error: 'Server error' });
+    }
+});
+
 
 app.listen(3001,()=>{
     console.log('has started');

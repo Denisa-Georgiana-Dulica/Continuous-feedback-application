@@ -17,7 +17,7 @@ export const reaction=sequelize.define('Reactions',{
             key:'activitiesId'
         }
     },
-    stundentId:{
+    studentId:{
         type:DataTypes.UUID,
         allowNull:false,
         references:{
@@ -37,8 +37,8 @@ export const reaction=sequelize.define('Reactions',{
     }
 });
 
-activity.hasMany(reaction,{foreignKey:'activitiesId'});
-reaction.belongsTo(activity,{foreignKey:'activitiesId'});
+activity.hasMany(reaction,{foreignKey:'activityId'});
+reaction.belongsTo(activity,{foreignKey:'activityId'});
 
-user.hasMany(reaction,{foreignKey:'userId'});
-reaction.belongsTo(user,{foreignKey:'userId'});
+user.hasMany(reaction,{foreignKey:'studentId'});
+reaction.belongsTo(user,{foreignKey:'studentId'});
