@@ -281,7 +281,7 @@ app.get('/teacher-activities', async (req,res)=>{
         });
 
         if (activities.length === 0) {
-            return res.status(200).json({
+            return res.status(404).json({
                 message: 'No activities found for this teacher'
             });
         }
