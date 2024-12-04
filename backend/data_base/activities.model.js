@@ -22,7 +22,7 @@ export const activity=sequelize.define('Activities',{
     code:{ 
         type:DataTypes.INTEGER,
         allowNull:false,
-        unique:true,
+        unique:true
     },
     start_date:{ 
         type:DataTypes.DATE,
