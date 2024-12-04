@@ -9,6 +9,7 @@ import { expressjwt } from "express-jwt";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { reaction } from './data_base/reactions.model.js';
+import {v4 as uuidv4} from 'uuid'
 
 const jwtSecret = process.env.JWT_SECRET;
 
@@ -22,6 +23,23 @@ app.use(expressjwt({
 }).unless({
     path:['/login'] //endpointuri excluse
 }));
+
+function generateUniqueCode()
+{
+    const date=Date.now();
+    const date_miliseconds=date%1000;
+    if (date_miliseconds < 100) {
+        date_miliseconds = `0${date_miliseconds}`;
+    }
+    console.log(date_miliseconds);
+    const code_uuid=uuidv4();
+    const unique_code=code_uuid.replace(/\D/g,'');//I replace all the characters that are not numbers and keep only the digits
+    console.log(unique_code);
+    const long_code=`${date_miliseconds}${unique_code}`;
+    const code=long_code.slice(0,6);
+    return code;
+}
+
 
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -74,13 +92,12 @@ app.post('/activities',async (req,res)=>{
             return res.status(403).json({error:'Only teachers can create activities.'})
         }
 
-        const lastActivity = await activity.findOne({ order: [['code', 'DESC']] });
-        const nextCode = lastActivity ? lastActivity.code + 1 : 1;
+        const code=generateUniqueCode();
         
         const newActivity=await activity.create({
             title,
             description,
-            code:nextCode,
+            code:code,
             start_date,
             end_date,
             teacherId:req.auth.userId
