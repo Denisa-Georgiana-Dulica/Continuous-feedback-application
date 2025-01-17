@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import express from 'express'
+import cors from 'cors';
 import { getUserByEmail,migrate } from './data_base/index.js';
 import { user } from './data_base/users.model.js';
 import { activity } from './data_base/activities.model.js';
@@ -15,14 +16,29 @@ const jwtSecret = process.env.JWT_SECRET;
 
 const app=express();
 app.use(express.json());
+
+app.use(cors({
+    origin: 'http://localhost:3000', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    credentials: true 
+}));
+
 migrate();
 
 app.use(expressjwt({
-    secret:jwtSecret,
-    algorithms:['HS256']
-}).unless({
-    path:['/login'] //endpointuri excluse
-}));
+    secret: jwtSecret,
+    algorithms: ['HS256']
+  }).unless({
+    path: ['/login']
+  }));
+  
+  app.use((err, req, res, next) => {
+    if (err.name === 'UnauthorizedError') {
+      console.error('Unauthorized error: ', err);
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+    next();
+  });
 
 function generateUniqueCode()
 {
@@ -70,7 +86,12 @@ app.post('/login', async (req, res) => {
         );
 
         
-        return res.status(200).json({ message: 'Login successful', token });
+        return res.status(200).json({ 
+            message: 'Login successful', 
+            token, 
+            role: foundUser.role,
+            userId:foundUser.userId
+        });
     } catch (error) {
         console.error('Login error:', error);
         return res.status(500).json({ error: 'Server error' });
@@ -279,39 +300,34 @@ app.post('/student_feedback',async (req,res)=>{
     }
 });
 
-app.get('/teacher-activities', async (req,res)=>{
-    try{
-    
-        if (!req.auth || req.auth.role !== 'teacher') {
-            return res.status(403).json({ error: 'Only teachers can access activities' });
-        }
-
-        const activities = await activity.findAll({
-            where: { teacherId: req.auth.userId },
-            attributes:['activitiesId','title','code','start_date','end_date'],
-            order: [['start_date', 'ASC']],
-            include:[{
-                model:reaction,
-                attributes:['emoji','timestamp','studentId'],
-                order: [['timestamp', 'ASC']]
-            }]
-        });
-
-        if (activities.length === 0) {
-            return res.status(404).json({
-                message: 'No activities found for this teacher'
-            });
-        }
-
-        return res.status(200).json({
-            message: 'Activities retrieved successfully',
-            activities:activities,
-        });
+app.get('/teacher-activities', async (req, res) => {
+    try {
+      if (!req.auth || req.auth.role !== 'teacher') {
+        return res.status(403).json({ error: 'Only teachers can access activities' });
+      }
+  
+      const activities = await activity.findAll({
+        where: { teacherId: req.auth.userId },
+        attributes: ['activitiesId', 'title', 'code', 'start_date', 'end_date'],
+        include: [{
+          model: reaction,
+          attributes: ['emoji', 'timestamp', 'studentId'],
+        }],
+        order: [['start_date', 'ASC']],
+      });
+      console.log(activities);
+  
+      if (activities.length === 0) {
+        return res.status(404).json({ message: 'No activities found for this teacher' });
+      }
+  
+      return res.status(200).json({ activities });
     } catch (error) {
-        console.error('Error fetching teacher activities:', error);
-        return res.status(500).json({ error: 'Server error' });
+      console.error('Error fetching teacher activities:', error);
+      return res.status(500).json({ error: 'Server error' });
     }
 });
+
 
 
 app.listen(3001,()=>{

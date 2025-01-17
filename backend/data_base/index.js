@@ -26,11 +26,24 @@ export async function migrate() {
         role:'student'
     },
     {
-        name:'Codreanu Madalina',
-        email:'codreanu.madalina22@gmail.com',
+        name:'Popescu Mihaela',
+        email:'popescu.mihaela22@gmail.com',
+        password:'1234567',
+        role:'student'
+    },
+    {
+        name:'Dinca David',
+        email:'dinca.david22@gmail.com',
         password:'20056784',
         role:'teacher'
-    }];
+    },
+    {
+        name:'Simionescu Alexandru',
+        email:'simionescu.alexandru22@gmail.com',
+        password:'987654321',
+        role:'teacher'
+    }
+];
 
     for(const userData of users)//
     {
