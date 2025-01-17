@@ -1,0 +1,88 @@
+/* Stilizare pentru containerul principal */
+.login-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Titlul paginii */
+  .login-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Formă generală */
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Stil pentru fiecare div al input-urilor */
+  form div {
+    margin-bottom: 15px;
+  }
+  
+  /* Etichete */
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+    color: #555;
+  }
+  
+  /* Input-uri */
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+  
+  input[type="email"]:focus,
+  input[type="password"]:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  /* Butonul de login */
+  button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Mesaje de eroare */
+  p {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  
+  /* Mesaj de eroare */
+  p[style*="red"] {
+    color: red;
+  }
+  
+  /* Mesaj de succes */
+  p[style*="green"] {
+    color: green;
+  }
+  
