@@ -33,4 +33,4 @@
 ## User feedback:
 💥 Our colleagues tested the site and appreciated being able to share their opinions about each activity. This feedback is collected anonymously, which allows them to express their honest opinions about educational activities. In addition, the interface is simple and easy to use, and the user experience is very positive. Users have mentioned that it would be great to be able to add written feedback, and also anonymously to provide additional details about the activities they are involved in.
 
-### Produced by Dulică Denisa, Diniță Cosmina, Dincă David
+###  Produced by Dulică Denisa, Diniță Cosmina, Dincă David
