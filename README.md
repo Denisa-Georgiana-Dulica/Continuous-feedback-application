@@ -22,6 +22,14 @@
 - Each feedback is accompanied by the exact date, allowing the teacher to observe student reactions in real-time.
 
 ![Captură de ecran 2025-01-20 182114](https://github.com/user-attachments/assets/5cc31d71-186c-4c10-844b-71fc9e71309a)
+
+💥 Student page include:
+
+- The student enters his page and selects the teacher whose activities he wants to view.
+- To provide feedback, the student must first enter the activity's access code.
+- After entering the code correctly, a feedback box will appear where the student can provide more feedback for that activity.
+- If the access code is incorrect or if the activity deadline has passed, the student will not be able to provide feedback.
+
 ## User feedback:
 💥 Our colleagues tested the site and appreciated being able to share their opinions about each activity. This feedback is collected anonymously, which allows them to express their honest opinions about educational activities. In addition, the interface is simple and easy to use, and the user experience is very positive. Users have mentioned that it would be great to be able to add written feedback, and also anonymously to provide additional details about the activities they are involved in.
 
