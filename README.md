@@ -5,7 +5,7 @@ A web application for continuous feedback is useful for improving the quality of
 
 ![Captură de ecran 2025-01-20 181936](https://github.com/user-attachments/assets/becadafa-540d-43aa-be23-523616fce3c7)
 
-Login page: Upon login, each student and teacher have predefined accounts in the database. Each account is unique and associated with a specific role (student or teacher). Users can only use the predefined account in the database to log in to the application.
+💥 Login page: Upon login, each student and teacher have predefined accounts in the database. Each account is unique and associated with a specific role (student or teacher). Users can only use the predefined account in the database to log in to the application.
 
 - The student can only access the student page and the teacher can only access the teacher page.
 - If a student tries to log in on the teacher's page or vice versa, this will not be allowed.
@@ -14,6 +14,6 @@ Login page: Upon login, each student and teacher have predefined accounts in the
 ![Captură de ecran 2025-01-20 181902](https://github.com/user-attachments/assets/4cd84233-d4f9-4246-92d5-ed523ffce88b)
 
 ![Captură de ecran 2025-01-20 182114](https://github.com/user-attachments/assets/5cc31d71-186c-4c10-844b-71fc9e71309a)
-## UserFeedback:
+## User feedback:
 Our colleagues tested the site and appreciated being able to share their opinions about each activity. This feedback is collected anonymously, which allows them to express their honest opinions about educational activities. In addition, the interface is simple and easy to use, and the user experience is very positive. Users have mentioned that it would be great to be able to add written feedback, and also anonymously to provide additional details about the activities they are involved in.
 
