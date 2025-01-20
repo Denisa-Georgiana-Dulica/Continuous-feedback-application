@@ -30,8 +30,8 @@
 - After entering the code correctly, a feedback box will appear where the student can provide more feedback for that activity.
 - If the access code is incorrect or if the activity deadline has passed, the student will not be able to provide feedback.
 
-## 🤔 Improvement points:
-- Considering the valuable reviews we have received from our users, especially regarding the feedback section of the application, our team has reflected on how we can better address your needs.
+##  Improvement points:
+- Considering the valuable reviews we have received from our users, especially regarding the feedback section of the application, our team has reflected on how we can better address your needs.🤔
 - Based on your suggestions, we plan to implement, in the future, an anonymous text section to complement the current emoji-based system. This change will allow students to express their ideas, thoughts, and needs freely and in detail while maintaining complete confidentiality.
 - 3D will implement the option for professors to delete an activity. This will allow professors not only to add but also to remove activities from the menu, providing greater flexibility in managing content.
 
