@@ -17,11 +17,25 @@ const jwtSecret = process.env.JWT_SECRET;
 const app=express();
 app.use(express.json());
 
-app.use(cors({
-    origin: 'http://localhost:3000', 
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-    credentials: true 
-}));
+const allowedOrigins = [
+    'http://localhost:3000', // Pentru dezvoltare locală
+    'https://continuous-feedback-applic-git-770f52-denisas-projects-a50d7f08.vercel.app' // Domeniul frontend-ului din Vercel
+];
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true, // Dacă folosești cookies sau autentificare
+};
+
+app.use(cors(corsOptions));
+
 
 migrate();
 
