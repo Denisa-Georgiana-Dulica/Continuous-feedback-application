@@ -1,6 +1,5 @@
-<div style="text-align: center;">
-  # Continuous feedback application
-</div>
+# Continuous feedback application
+
 ## What is the main need/problem that the product solves?
 💥 A web application for continuous feedback is useful for improving the quality of work within a university. This way, professors always know if the material is understood by the students, and if the teaching methods are effective. Moreover, they can observe the students' status during an activity and identify moments when changes might be needed. For students, it is an opportunity to express their opinions and feelings regarding the professor's activities.
 
