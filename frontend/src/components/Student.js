@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./Student.css"
 
 const Student = () => {
   const [teachers, setTeachers] = useState([]);
@@ -206,26 +207,57 @@ const Student = () => {
                   </div>
                 )}
 
-                {validatedActivities[activity.activitiesId] && (
-                  <div className="reactions-container">
-                    {["😊", "😞", "😲", "🤔"].map((emoji) => (
-                      <div
-                        key={emoji}
-                        className={`reaction-box ${
-                          selectedReactions[activity.activitiesId] === emoji
-                            ? "selected"
-                            : ""
-                        }`}
-                        onClick={() => handleReactionSelect(activity.activitiesId, emoji)}
-                      >
-                        {emoji}
-                      </div>
-                    ))}
-                    <button onClick={() => handleReaction(activity.activitiesId)}>
-                      Submit Feedback
-                    </button>
-                  </div>
-                )}
+{validatedActivities[activity.activitiesId] && (
+  <div className="reactions-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Reactions</th>
+          <th>Select</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {["😊", "😞"].map((emoji) => (
+            <td
+              key={emoji}
+              className={`reaction-cell ${
+                selectedReactions[activity.activitiesId] === emoji
+                  ? "selected"
+                  : ""
+              }`}
+              onClick={() => handleReactionSelect(activity.activitiesId, emoji)}
+            >
+              {emoji}
+            </td>
+          ))}
+        </tr>
+        <tr>
+          {["😲", "🤔"].map((emoji) => (
+            <td
+              key={emoji}
+              className={`reaction-cell ${
+                selectedReactions[activity.activitiesId] === emoji
+                  ? "selected"
+                  : ""
+              }`}
+              onClick={() => handleReactionSelect(activity.activitiesId, emoji)}
+            >
+              {emoji}
+            </td>
+          ))}
+        </tr>
+      </tbody>
+    </table>
+    <button
+      onClick={() => handleReaction(activity.activitiesId)}
+      disabled={!selectedReactions[activity.activitiesId]}
+    >
+      Submit Feedback
+    </button>
+  </div>
+)}
+                
               </li>
             ))}
           </ul>

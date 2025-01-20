@@ -1,167 +1,149 @@
-/* Stiluri generale pentru dashboard */
 .student-dashboard {
   font-family: 'Arial', sans-serif;
-  margin: 20px;
-  padding: 20px;
-  background: #f4f7fc; /* Fundal ușor gri-alb */
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap; /* Pentru a se adapta mai bine pe ecrane mici */
+  margin: 0 auto;
+  padding: 40px;
+  max-width: 1200px;
+  background-color: #f7f9fc;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* Titlu principal */
-.student-dashboard h2 {
-  color: #333;
-  font-size: 2em;
+h2 {
   text-align: center;
-  margin-bottom: 20px;
-  width: 100%; /* Pentru a ocupa lățimea completă */
-}
-
-/* Stiluri pentru reacțiile emoji */
-.reactions-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Două coloane pentru emoji */
-  grid-gap: 15px; /* Spațiu între elemente */
-  width: 250px; /* Lățimea totală a zonei de reacții */
-  margin: 20px auto; /* Centrare */
-}
-
-/* Reacție individuală */
-.reaction-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #fff;
-  width: 100px;
-  height: 100px; /* Dimensiune fixă pentru uniformitate */
-  border-radius: 10px;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-/* Highlight pentru reacția selectată */
-.reaction-box.selected {
-  background-color: #4caf50;
-  color: white;
-  transform: scale(1.1); /* Efect vizual */
-}
-
-/* Hover efect */
-.reaction-box:hover {
-  background-color: #e0e0e0; /* Culoare de hover */
-}
-
-/* Stiluri pentru mesajele de feedback */
-.student-dashboard p {
-  font-size: 1.1em;
-  text-align: center;
-  color: #f44336; /* Roșu pentru erori */
-  margin-top: 10px;
-}
-
-/* Succes */
-.student-dashboard p.success {
-  color: #4caf50; /* Verde pentru succes */
-}
-
-/* Stiluri pentru formularul de selectare profesor */
-.student-dashboard select {
-  width: 100%;
-  padding: 10px;
-  margin: 15px 0;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  font-size: 1em;
-  background-color: #fff;
-  color: #333;
-}
-
-.student-dashboard label {
-  font-size: 1.2em;
+  font-size: 32px;
   font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
 }
 
-/* Stiluri pentru lista activităților */
-.student-dashboard ul {
-  list-style-type: none;
-  padding: 0;
+label {
+  font-size: 18px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+select {
+  padding: 12px 18px;
+  font-size: 18px;
+  margin-bottom: 30px;
+  width: 100%;
+  max-width: 350px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  transition: border-color 0.3s;
+}
+
+select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+button {
+  padding: 12px 25px;
+  font-size: 18px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%; /* Make button full width */
+  transition: background-color 0.3s ease, transform 0.3s ease;
   margin-top: 20px;
 }
 
-.student-dashboard li {
-  background-color: #ffffff;
-  margin-bottom: 10px;
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background-color: #0056b3;
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+button:active:not(:disabled) {
+  background-color: #003d80;
+  transform: scale(1);
+}
+
+.reactions-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.reactions-container th,
+.reactions-container td {
   padding: 15px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.student-dashboard li:hover {
-  background-color: #f1f8ff;
-}
-
-.student-dashboard li strong {
-  font-size: 1.1em;
+  border: 1px solid #e1e1e1;
+  text-align: center;
+  font-size: 30px; /* Increase emoji size */
   color: #333;
 }
 
-.student-dashboard li div {
-  margin-top: 10px;
-}
-
-/* Input pentru cod */
-.student-dashboard input[type="text"] {
-  padding: 8px;
-  width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 1em;
-}
-
-/* Buton general */
-.student-dashboard button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-size: 1.1em;
+.reaction-cell {
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.reaction-cell.selected {
+  background-color: #007bff; /* Highlight the selected emoji with blue */
+  color: white; /* White color for the selected emoji */
+  border-radius: 50%; /* Make the selected emoji circular */
+  transform: scale(0.5); /* Slight zoom effect to emphasize selection */
+}
+
+.reaction-cell:hover:not(.selected) {
+  background-color: #f1f1f1;
+}
+
+.reactions-container td:hover {
+  background-color: #f9f9f9;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+ul li {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+ul li:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+ul li strong {
+  display: block;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+ul li .reactions-container {
+  margin-top: 15px;
+}
+
+ul li .reactions-container table {
   margin-top: 10px;
-  transition: background-color 0.3s ease;
 }
 
-.student-dashboard button:hover {
-  background-color: #45a049;
+ul li .reactions-container td {
+  width: 25%;
 }
 
-/* Media Queries pentru a face pagina responsivă */
-@media (max-width: 768px) {
-  .student-dashboard {
-    flex-direction: column; /* Stivează elementele pe verticală */
-    align-items: center;
-  }
-
-  .student-dashboard h2 {
-    font-size: 1.5em;
-  }
-
-  .reactions-container {
-    width: 200px; /* Ajustează lățimea pentru mobil */
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 10px; /* Spațiu mai mic între elemente */
-  }
-
-  .reaction-box {
-    width: 200px;
-    height: 200px; /* Dimensiuni mai mici pentru mobil */
-  }
-
-  .student-dashboard button {
-    padding: 8px;
-  }
+ul li .reactions-container td.selected {
+  color: #007bff;
+  font-weight: bold;
 }
