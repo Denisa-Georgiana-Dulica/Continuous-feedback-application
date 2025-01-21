@@ -23,7 +23,7 @@ export async function migrate() {
         name:'Dinita Cosmina',
         email:'dinita.cosmina22@gmail.com',
         password:'2004678998',
-        role:'student'
+        role:'teacher'
     },
     {
         name:'Popescu Mihaela',
